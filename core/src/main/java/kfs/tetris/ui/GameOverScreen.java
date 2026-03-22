@@ -17,16 +17,18 @@ public class GameOverScreen extends BaseScreen {
 
     private final int score;
     private final String mapPath;
+    private final boolean isWin;
     private final Table table;
     private static final String CHAR_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
     private final char[] nameChars = {' ', ' ', ' ', ' ', ' ', ' '};
     private int cursorPos = 0;
     private TextButton[] letterButtons;
 
-    public GameOverScreen(KfsMain game, int score, String mapPath) {
+    public GameOverScreen(KfsMain game, int score, String mapPath, boolean isWin) {
         super(game, true);
         this.score = score;
         this.mapPath = mapPath;
+        this.isWin = isWin;
 
         // Restore last used name
         if (game.lastPlayerName != null && !game.lastPlayerName.isEmpty()) {
@@ -220,8 +222,13 @@ public class GameOverScreen extends BaseScreen {
     }
 
     private void addHeader() {
-        Label.LabelStyle titleStyle = new Label.LabelStyle(fontBig, Color.LIME);
-        table.add(new Label("YOU WIN!", titleStyle)).padBottom(20).row();
+        if (isWin) {
+            Label.LabelStyle titleStyle = new Label.LabelStyle(fontBig, Color.LIME);
+            table.add(new Label("YOU WIN!", titleStyle)).padBottom(20).row();
+        } else {
+            Label.LabelStyle titleStyle = new Label.LabelStyle(fontBig, Color.RED);
+            table.add(new Label("GAME OVER", titleStyle)).padBottom(20).row();
+        }
 
         // Extract level name from map path
         String levelName = mapPath;
@@ -237,22 +244,26 @@ public class GameOverScreen extends BaseScreen {
     }
 
     private void addBottomButtons() {
-        String nextLevel = game.getMap(mapPath);
-        if (nextLevel != null) {
-            TextButton nextButton = new TextButton("NEXT LEVEL", getTextButtonStyle(fontMiddle, Color.WHITE));
-            nextButton.addListener(new ClickListener() {
+        if (isWin) {
+            // Won last level - no next level button needed
+        } else {
+            // Game over (lost) - try again
+            TextButton retryButton = new TextButton("TRY AGAIN", getTextButtonStyle(fontMiddle, Color.YELLOW));
+            retryButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    game.setScreen(new TetrisScreen(game, nextLevel));
+                    game.accumulatedScore = 0;
+                    game.setScreen(new TetrisScreen(game, mapPath));
                 }
             });
-            table.add(nextButton).width(300).height(60).padBottom(20).row();
+            table.add(retryButton).width(300).height(60).padBottom(20).row();
         }
 
         TextButton menuButton = new TextButton("MENU", getTextButtonStyle(fontMiddle, Color.WHITE));
         menuButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.accumulatedScore = 0;
                 game.setScreen(new MainScreen(game));
             }
         });

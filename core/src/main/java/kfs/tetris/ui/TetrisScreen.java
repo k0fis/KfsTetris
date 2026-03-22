@@ -115,12 +115,21 @@ public class TetrisScreen extends ScreenAdapter {
         // Check end conditions
         if (world.isLevelComplete()) {
             if (game.sounds != null) game.sounds.playLevelComplete();
-            game.setScreen(new GameOverScreen(game, world.getScore(), mapPath));
+            game.accumulatedScore += world.getScore();
+            String nextLevel = game.getMap(mapPath);
+            if (nextLevel != null) {
+                // More levels - go directly to next
+                game.setScreen(new TetrisScreen(game, nextLevel));
+            } else {
+                // Last level beaten - submit score
+                game.setScreen(new GameOverScreen(game, game.accumulatedScore, mapPath, true));
+            }
             return;
         }
         if (world.isGameOver()) {
             if (game.sounds != null) game.sounds.playGameOver();
-            game.setScreen(new LevelDoneScreen(game, mapPath));
+            game.accumulatedScore += world.getScore();
+            game.setScreen(new GameOverScreen(game, game.accumulatedScore, mapPath, false));
             return;
         }
 

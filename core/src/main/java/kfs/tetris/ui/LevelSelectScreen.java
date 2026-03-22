@@ -35,6 +35,7 @@ public class LevelSelectScreen extends BaseScreen {
             levelButton.getColor().a = KfsConst.BUTTON_TRANSPARENCY;
             levelButton.addListener(e -> {
                 if (levelButton.isPressed()) {
+                    game.accumulatedScore = 0;
                     game.setScreen(new TetrisScreen(game, file.path()));
                 }
                 return false;

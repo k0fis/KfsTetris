@@ -13,6 +13,7 @@ public class KfsMain extends Game {
     public MusicManager music;
     public SoundManager sounds;
     public String lastPlayerName = "";
+    public int accumulatedScore = 0;
 
     @Override
     public void create() {
