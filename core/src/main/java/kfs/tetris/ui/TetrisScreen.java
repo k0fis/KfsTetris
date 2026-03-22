@@ -79,7 +79,11 @@ public class TetrisScreen extends ScreenAdapter {
         int gridPixelW = cellSize * KfsConst.GRID_W;
         int gridPixelH = cellSize * KfsConst.GRID_H;
 
-        gridOffsetX = 10;
+        // Center grid + HUD as a unit
+        int hudGap = 20;
+        int hudWidth = 160;
+        int totalContentW = gridPixelW + hudGap + hudWidth;
+        gridOffsetX = Math.max(10, (screenW - totalContentW) / 2);
         gridOffsetY = (screenH - gridPixelH) / 2;
     }
 
