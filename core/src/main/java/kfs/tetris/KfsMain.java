@@ -11,11 +11,13 @@ import java.util.stream.Stream;
 public class KfsMain extends Game {
 
     public MusicManager music;
+    public SoundManager sounds;
     public String lastPlayerName = "";
 
     @Override
     public void create() {
         music = new MusicManager("music/");
+        sounds = new SoundManager();
         setScreen(new MainScreen(this));
     }
 

@@ -26,6 +26,18 @@ maps/17 Flash Frenzy.txt
 maps/18 The Gauntlet.txt
 maps/19 Endurance.txt
 maps/20 Grand Finale.txt
+music/track_01.mp3
+music/track_02.mp3
+music/track_03.mp3
+sounds/drop.wav
+sounds/game_over.wav
+sounds/hard_drop.wav
+sounds/level_complete.wav
+sounds/line_clear.wav
+sounds/move.wav
+sounds/rotate.wav
+sounds/tetris.wav
+startup-logo.png
 ui/font-list.fnt
 ui/font-subtitle.fnt
 ui/font-window.fnt

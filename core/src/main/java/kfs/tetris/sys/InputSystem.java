@@ -2,6 +2,7 @@ package kfs.tetris.sys;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import kfs.tetris.SoundManager;
 import kfs.tetris.Tetromino;
 import kfs.tetris.World;
 import kfs.tetris.comp.GravityComp;
@@ -56,14 +57,22 @@ public class InputSystem implements KfsSystem {
         // Rotate (Up or Z)
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
             int[][] rotated = Tetromino.rotateCW(shape.shape);
+            boolean rotated_ok = false;
             if (world.canPlace(rotated, shape.x, shape.y)) {
                 shape.shape = rotated;
+                rotated_ok = true;
             } else if (world.canPlace(rotated, shape.x - 1, shape.y)) {
                 shape.shape = rotated;
                 shape.x--;
+                rotated_ok = true;
             } else if (world.canPlace(rotated, shape.x + 1, shape.y)) {
                 shape.shape = rotated;
                 shape.x++;
+                rotated_ok = true;
+            }
+            if (rotated_ok) {
+                SoundManager s = world.getSounds();
+                if (s != null) s.playRotate();
             }
         }
 
@@ -82,6 +91,8 @@ public class InputSystem implements KfsSystem {
             }
             world.lockPiece(shape.shape, shape.x, shape.y);
             world.deleteEntity(active);
+            SoundManager s = world.getSounds();
+            if (s != null) s.playHardDrop();
         }
         spaceWasPressed = spacePressed;
     }

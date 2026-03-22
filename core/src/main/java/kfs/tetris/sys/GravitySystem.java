@@ -1,5 +1,6 @@
 package kfs.tetris.sys;
 
+import kfs.tetris.SoundManager;
 import kfs.tetris.World;
 import kfs.tetris.comp.ActiveComp;
 import kfs.tetris.comp.GravityComp;
@@ -31,6 +32,8 @@ public class GravitySystem implements KfsSystem {
                 // Lock piece
                 world.lockPiece(shape.shape, shape.x, shape.y);
                 world.deleteEntity(active);
+                SoundManager s = world.getSounds();
+                if (s != null) s.playDrop();
             }
         }
     }

@@ -34,6 +34,7 @@ public class TetrisScreen extends ScreenAdapter {
         this.mapPath = mapPath;
 
         world = new World();
+        world.setSounds(game.sounds);
         int level = game.getMapIndex(mapPath);
         world.initGame(level, mapPath);
 
@@ -96,10 +97,12 @@ public class TetrisScreen extends ScreenAdapter {
 
         // Check end conditions
         if (world.isLevelComplete()) {
+            if (game.sounds != null) game.sounds.playLevelComplete();
             game.setScreen(new GameOverScreen(game, world.getScore(), mapPath));
             return;
         }
         if (world.isGameOver()) {
+            if (game.sounds != null) game.sounds.playGameOver();
             game.setScreen(new LevelDoneScreen(game, mapPath));
             return;
         }

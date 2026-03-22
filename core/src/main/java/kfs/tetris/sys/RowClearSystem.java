@@ -1,6 +1,7 @@
 package kfs.tetris.sys;
 
 import kfs.tetris.KfsConst;
+import kfs.tetris.SoundManager;
 import kfs.tetris.World;
 import kfs.tetris.comp.PlayerComp;
 import kfs.tetris.ecs.KfsSystem;
@@ -71,6 +72,16 @@ public class RowClearSystem implements KfsSystem {
         player.linesCleared += lines;
         player.flashRemaining -= flashCleared;
         if (player.flashRemaining < 0) player.flashRemaining = 0;
+
+        // Sound
+        SoundManager s = world.getSounds();
+        if (s != null) {
+            if (lines >= 4) {
+                s.playTetris();
+            } else {
+                s.playLineClear();
+            }
+        }
     }
 
     private void removeRow(int row) {

@@ -18,9 +18,18 @@ public class World extends KfsWorld {
     private boolean gameOver;
     private boolean levelComplete;
     private float gravityInterval = 0.8f;
+    private SoundManager sounds;
 
     public World() {
         super();
+    }
+
+    public void setSounds(SoundManager sounds) {
+        this.sounds = sounds;
+    }
+
+    public SoundManager getSounds() {
+        return sounds;
     }
 
     public void initGame(int level, String mapFile) {
