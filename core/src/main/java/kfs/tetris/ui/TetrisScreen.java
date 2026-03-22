@@ -65,13 +65,17 @@ public class TetrisScreen extends ScreenAdapter {
         updateLayout();
     }
 
+    private static final int BTN_H = 64;
+    private static final int BTN_GAP = 4;
+    private static final int BTN_ZONE = BTN_H + BTN_GAP * 2;
+
     private void updateLayout() {
         screenW = Gdx.graphics.getWidth();
         screenH = Gdx.graphics.getHeight();
 
         // Calculate cell size to fit grid in ~60% of screen width
         int gridAreaW = (int) (screenW * 0.6f);
-        int gridAreaH = screenH - 20;
+        int gridAreaH = screenH - 20 - BTN_ZONE;
 
         cellSize = Math.min(gridAreaW / KfsConst.GRID_W, gridAreaH / KfsConst.GRID_H);
         if (cellSize < 4) cellSize = 4;
@@ -84,7 +88,7 @@ public class TetrisScreen extends ScreenAdapter {
         int hudWidth = 160;
         int totalContentW = gridPixelW + hudGap + hudWidth;
         gridOffsetX = Math.max(10, (screenW - totalContentW) / 2);
-        gridOffsetY = (screenH - gridPixelH) / 2;
+        gridOffsetY = BTN_ZONE + (screenH - BTN_ZONE - gridPixelH) / 2;
     }
 
     @Override
@@ -224,6 +228,48 @@ public class TetrisScreen extends ScreenAdapter {
                 gridOffsetX + KfsConst.GRID_W * cellSize, gridOffsetY + y * cellSize);
         }
         shapeRenderer.end();
+
+        // Draw touch buttons
+        drawTouchButtons();
+    }
+
+    private void drawTouchButtons() {
+        int btnW = (screenW - BTN_GAP * 5) / 4;
+
+        // Highlight active button
+        int activeBtn = -1;
+        if (Gdx.input.isTouched()) {
+            int tx = Gdx.input.getX();
+            int ty = screenH - Gdx.input.getY();
+            if (ty < BTN_ZONE) {
+                activeBtn = tx * 4 / screenW;
+            }
+        }
+
+        // Button backgrounds
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (int i = 0; i < 4; i++) {
+            int bx = BTN_GAP + i * (btnW + BTN_GAP);
+            if (i == activeBtn) {
+                shapeRenderer.setColor(0.4f, 0.4f, 0.65f, 0.85f);
+            } else {
+                shapeRenderer.setColor(0.2f, 0.2f, 0.3f, 0.6f);
+            }
+            shapeRenderer.rect(bx, BTN_GAP, btnW, BTN_H);
+        }
+        shapeRenderer.end();
+
+        // Button labels
+        batch.begin();
+        String[] labels = {"<", "ROT", "DROP", ">"};
+        for (int i = 0; i < 4; i++) {
+            int bx = BTN_GAP + i * (btnW + BTN_GAP);
+            fontSmall.setColor(i == activeBtn ? Color.WHITE : Color.LIGHT_GRAY);
+            float textW = labels[i].length() * 11f;
+            fontSmall.draw(batch, labels[i], bx + (btnW - textW) / 2f, BTN_GAP + BTN_H / 2f + 5);
+        }
+        batch.end();
     }
 
     private void drawCell(int gx, int gy) {

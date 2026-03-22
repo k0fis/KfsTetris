@@ -15,8 +15,15 @@ public class InputSystem implements KfsSystem {
     private final World world;
     private float moveTimer;
     private static final float MOVE_DELAY = 0.12f;
-    private boolean hardDropped;
     private boolean spaceWasPressed;
+
+    // Touch state
+    private boolean touchRotateTriggered;
+    private boolean touchDropTriggered;
+
+    static final int BTN_H = 64;
+    static final int BTN_GAP = 4;
+    static final int BTN_ZONE = BTN_H + BTN_GAP * 2;
 
     public InputSystem(World world) {
         this.world = world;
@@ -33,7 +40,50 @@ public class InputSystem implements KfsSystem {
 
         moveTimer -= delta;
 
-        // Left
+        boolean movedByTouch = false;
+        boolean rotateByTouch = false;
+        boolean dropByTouch = false;
+
+        // Touch controls
+        if (Gdx.input.isTouched()) {
+            int tx = Gdx.input.getX();
+            int ty = Gdx.graphics.getHeight() - Gdx.input.getY();
+            int sw = Gdx.graphics.getWidth();
+
+            if (ty < BTN_ZONE) {
+                int zone = tx * 4 / sw;
+                if (zone == 0) {
+                    // LEFT
+                    movedByTouch = true;
+                    if (moveTimer <= 0) {
+                        if (world.canPlace(shape.shape, shape.x - 1, shape.y)) {
+                            shape.x--;
+                        }
+                        moveTimer = MOVE_DELAY;
+                    }
+                } else if (zone == 3) {
+                    // RIGHT
+                    movedByTouch = true;
+                    if (moveTimer <= 0) {
+                        if (world.canPlace(shape.shape, shape.x + 1, shape.y)) {
+                            shape.x++;
+                        }
+                        moveTimer = MOVE_DELAY;
+                    }
+                } else if (zone == 1 && !touchRotateTriggered) {
+                    rotateByTouch = true;
+                    touchRotateTriggered = true;
+                } else if (zone == 2 && !touchDropTriggered) {
+                    dropByTouch = true;
+                    touchDropTriggered = true;
+                }
+            }
+        } else {
+            touchRotateTriggered = false;
+            touchDropTriggered = false;
+        }
+
+        // Keyboard: Left
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             if (moveTimer <= 0) {
                 if (world.canPlace(shape.shape, shape.x - 1, shape.y)) {
@@ -42,7 +92,7 @@ public class InputSystem implements KfsSystem {
                 moveTimer = MOVE_DELAY;
             }
         }
-        // Right
+        // Keyboard: Right
         else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             if (moveTimer <= 0) {
                 if (world.canPlace(shape.shape, shape.x + 1, shape.y)) {
@@ -50,12 +100,13 @@ public class InputSystem implements KfsSystem {
                 }
                 moveTimer = MOVE_DELAY;
             }
-        } else {
+        } else if (!movedByTouch) {
             moveTimer = 0;
         }
 
-        // Rotate (Up or Z)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+        // Rotate (keyboard or touch)
+        boolean keyRotate = Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.Z);
+        if (keyRotate || rotateByTouch) {
             int[][] rotated = Tetromino.rotateCW(shape.shape);
             boolean rotated_ok = false;
             if (world.canPlace(rotated, shape.x, shape.y)) {
@@ -83,9 +134,9 @@ public class InputSystem implements KfsSystem {
             gravity.interval = world.getGravityInterval();
         }
 
-        // Hard drop
+        // Hard drop (keyboard or touch)
         boolean spacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
-        if (spacePressed && !spaceWasPressed) {
+        if ((spacePressed && !spaceWasPressed) || dropByTouch) {
             while (world.canPlace(shape.shape, shape.x, shape.y + 1)) {
                 shape.y++;
             }
