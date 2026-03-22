@@ -61,14 +61,14 @@ public class RowClearSystem implements KfsSystem {
         int level = player.level;
         int lineScore;
         switch (lines) {
-            case 1: lineScore = 100 * level; break;
-            case 2: lineScore = 300 * level; break;
-            case 3: lineScore = 500 * level; break;
-            case 4: lineScore = 800 * level; break;
-            default: lineScore = 100 * lines * level; break;
+            case 1: lineScore = 1 * level; break;
+            case 2: lineScore = 3 * level; break;
+            case 3: lineScore = 5 * level; break;
+            case 4: lineScore = 8 * level; break;
+            default: lineScore = 1 * lines * level; break;
         }
         player.score += lineScore;
-        player.score += flashCleared * 50;
+        player.score += flashCleared * 25;
         player.linesCleared += lines;
         player.flashRemaining -= flashCleared;
         if (player.flashRemaining < 0) player.flashRemaining = 0;

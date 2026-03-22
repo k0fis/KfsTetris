@@ -22,7 +22,7 @@ public class LevelCheckSystem implements KfsSystem {
 
         if (player.flashRemaining <= 0) {
             // Level complete bonus
-            player.score += 1000;
+            player.score += 50;
             world.setLevelComplete(true);
         }
     }
