@@ -38,7 +38,7 @@ public class TetrisScreen extends ScreenAdapter {
         world = new World();
         world.setSounds(game.sounds);
         int level = game.getMapIndex(mapPath);
-        world.initGame(level, mapPath);
+        world.initGame(level, mapPath, game.accumulatedScore);
 
         world.addSys(new InputSystem(world));
         world.addSys(new GravitySystem(world));
@@ -115,7 +115,7 @@ public class TetrisScreen extends ScreenAdapter {
         // Check end conditions
         if (world.isLevelComplete()) {
             if (game.sounds != null) game.sounds.playLevelComplete();
-            game.accumulatedScore += world.getScore();
+            game.accumulatedScore = world.getScore();
             String nextLevel = game.getMap(mapPath);
             if (nextLevel != null) {
                 // More levels - go directly to next
@@ -128,7 +128,7 @@ public class TetrisScreen extends ScreenAdapter {
         }
         if (world.isGameOver()) {
             if (game.sounds != null) game.sounds.playGameOver();
-            game.accumulatedScore += world.getScore();
+            game.accumulatedScore = world.getScore();
             game.setScreen(new GameOverScreen(game, game.accumulatedScore, mapPath, false));
             return;
         }

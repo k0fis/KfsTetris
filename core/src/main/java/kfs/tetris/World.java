@@ -32,7 +32,7 @@ public class World extends KfsWorld {
         return sounds;
     }
 
-    public void initGame(int level, String mapFile) {
+    public void initGame(int level, String mapFile, int initialScore) {
         reset();
         clearGrid();
         gameOver = false;
@@ -44,7 +44,9 @@ public class World extends KfsWorld {
         }
 
         playerEntity = createEntity();
-        addComponent(playerEntity, new PlayerComp(level, flashCount));
+        PlayerComp player = new PlayerComp(level, flashCount);
+        player.score = initialScore;
+        addComponent(playerEntity, player);
 
         int nextType = Tetromino.randomType();
         nextPieceEntity = createEntity();
