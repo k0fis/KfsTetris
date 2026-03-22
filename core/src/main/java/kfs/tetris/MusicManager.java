@@ -11,6 +11,7 @@ public class MusicManager {
 
     private final List<Music> tracks = new ArrayList<>();
     private int currentTrack = 0;
+    private boolean muted = false;
 
     public MusicManager(String folderPath) {
         FileHandle folder = Gdx.files.internal(folderPath);
@@ -48,6 +49,28 @@ public class MusicManager {
         for (Music music : tracks) {
             music.stop();
         }
+    }
+
+    public boolean isMuted() { return muted; }
+
+    public void toggleMute() {
+        muted = !muted;
+        if (muted) {
+            for (Music music : tracks) {
+                music.setVolume(0f);
+            }
+        } else {
+            for (Music music : tracks) {
+                music.setVolume(0.5f);
+            }
+        }
+    }
+
+    public boolean isPlaying() {
+        for (Music music : tracks) {
+            if (music.isPlaying()) return true;
+        }
+        return false;
     }
 
     public void dispose() {

@@ -14,6 +14,8 @@ public class SoundManager {
     private final Sound levelComplete;
     private final Sound gameOver;
 
+    private boolean muted = false;
+
     public SoundManager() {
         rotate = load("sounds/rotate.wav");
         move = load("sounds/move.wav");
@@ -35,8 +37,11 @@ public class SoundManager {
     }
 
     private void play(Sound s, float volume) {
-        if (s != null) s.play(volume);
+        if (s != null && !muted) s.play(volume);
     }
+
+    public boolean isMuted() { return muted; }
+    public void toggleMute() { muted = !muted; }
 
     public void playRotate()        { play(rotate, 0.4f); }
     public void playMove()          { play(move, 0.3f); }

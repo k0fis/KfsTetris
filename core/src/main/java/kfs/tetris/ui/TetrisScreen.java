@@ -1,6 +1,7 @@
 package kfs.tetris.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -92,6 +93,14 @@ public class TetrisScreen extends ScreenAdapter {
 
         // Update
         if (!world.isGameOver() && !world.isLevelComplete()) {
+            // Audio toggles (M = music, N = sfx)
+            if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+                game.music.toggleMute();
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+                game.sounds.toggleMute();
+            }
+
             world.update(delta);
         }
 
@@ -268,6 +277,15 @@ public class TetrisScreen extends ScreenAdapter {
             fontMiddle.setColor(Color.LIME);
         }
         fontMiddle.draw(batch, String.valueOf(player.flashRemaining), hudX, hudY);
+
+        // Audio status
+        hudY -= 40;
+        fontSmall.setColor(Color.DARK_GRAY);
+        String musicStatus = game.music.isMuted() ? "[M] MUSIC OFF" : "[M] MUSIC ON";
+        String sfxStatus = game.sounds.isMuted() ? "[N] SFX OFF" : "[N] SFX ON";
+        fontSmall.draw(batch, musicStatus, hudX, hudY);
+        hudY -= 16;
+        fontSmall.draw(batch, sfxStatus, hudX, hudY);
     }
 
     @Override
