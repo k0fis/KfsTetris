@@ -29,6 +29,7 @@ public class TetrisScreen extends ScreenAdapter {
     private int screenW, screenH;
     private int cellSize;
     private int gridOffsetX, gridOffsetY;
+    private boolean mWasPressed, nWasPressed;
 
     public TetrisScreen(KfsMain game, String mapPath) {
         this.game = game;
@@ -94,12 +95,19 @@ public class TetrisScreen extends ScreenAdapter {
         // Update
         if (!world.isGameOver() && !world.isLevelComplete()) {
             // Audio toggles (M = music, N = sfx)
-            if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            boolean mPressed = Gdx.input.isKeyPressed(Input.Keys.M);
+            if (mPressed && !mWasPressed) {
                 game.music.toggleMute();
+                Gdx.app.log("TetrisScreen", "Music muted: " + game.music.isMuted());
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            mWasPressed = mPressed;
+
+            boolean nPressed = Gdx.input.isKeyPressed(Input.Keys.N);
+            if (nPressed && !nWasPressed) {
                 game.sounds.toggleMute();
+                Gdx.app.log("TetrisScreen", "SFX muted: " + game.sounds.isMuted());
             }
+            nWasPressed = nPressed;
 
             world.update(delta);
         }
